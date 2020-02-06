@@ -32,7 +32,22 @@ namespace Kata.Spec
         static int _result;
     }
 
-    // Given the user input is empty when calculating the sum then it should return zero.
+    public class when_one_number
+    {
+        Establish _context = () =>
+        {
+            _systemUnderTest = new Calculator();
+        };
+
+        Because of = () => { _result = _systemUnderTest.Add(number: "3"); };
+
+        It should_return_same_number = () => { _result.Should().Be( expected: 3); };
+        
+        static Calculator _systemUnderTest;
+        static int _result;
+    }
+
+    
     // Given the user input is one number when calculating the sum then it should return the same number. (example "3" should equal 3)
     // Given the user input is two numbers when calculating the sum then it should return the sum of those numbers. (example "1,2" should equal 3)
     // Given the user input is an unknown amount of numbers when calculating the sum then it should return the sum of all the numbers. (example "1,2,3" should equal 6)
