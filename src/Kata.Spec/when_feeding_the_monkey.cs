@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Machine.Specifications;
 
 namespace Kata.Spec
@@ -75,7 +76,7 @@ namespace Kata.Spec
         static int _result;
     }
     
-    public class when_using_newline
+    public class when_using_newline_delimiter
     {
         Establish _context = () =>
         {
@@ -89,12 +90,107 @@ namespace Kata.Spec
         static int _result;
     }
     
-    //done Given the user input is an unknown amount of numbers when calculating the sum then it should return the sum of all the numbers. (example "1,2,3" should equal 6)
-    //done Given the user input is multiple numbers with new line and comma delimiters when calculating the sum then it should return the sum of all the numbers. (example "1\n2,3" should equal 6)
-    // Given the user input is multiple numbers with a custom single-character delimiter when calculating the sum then it should return the sum of all the numbers. (example “//;\n1;2” should return 3)
-    // Given the user input contains one negative number when calculating the sum then it should throw an exception "negatives not allowed: x" (where x is the negative number).
-    // Given the user input contains multiple negative numbers mixed with positive numbers when calculating the sum then it should throw an exception "negatives not allowed: x, y, z" (where x, y, z are only the negative numbers).
-    // Given the user input contains numbers larger than 1000 when calculating the sum it should only sum the numbers less than 1001. (example 2 + 1001 = 2)
-    // Given the user input is multiple numbers with a custom multi-character delimiter when calculating the sum then it should return the sum of all the numbers. (example: “//[]\n12***3” should return 6)
-    // Given the user input is multiple numbers with multiple custom delimiters when calculating the sum then it should return the sum of all the numbers. (example “//[][%]\n12%3” should return 6)
+    public class when_using_custom_delimiter
+    {
+        Establish _context = () =>
+        {
+            _systemUnderTest = new Calculator();
+        };
+
+        Because of = () => { _result = _systemUnderTest.Add("//;\n1;2"); };
+
+        It should_return_the_sum_of_all = () => { _result.Should().Be(3); };
+        static Calculator _systemUnderTest;
+        static int _result;
+    }
+    
+    public class when_adding_negative_number
+    {
+        static Exception Exception;
+        
+        Establish _context = () =>
+        {
+            _systemUnderTest = new Calculator();
+            
+        };
+        
+        Because of = () => { Exception = Catch.Exception(() => _result = _systemUnderTest.Add("-6")); };
+        // _result = _systemUnderTest.Add("-6");
+        
+        It should_fail = () =>
+            Exception.Should().Be(Exception);
+        
+        It should_have_a_specific_reason = () =>
+            Exception.Message.Should().Contain("negatives");
+
+        static Calculator _systemUnderTest;
+        static int  _result;
+    }
+    
+    public class when_adding_multiple_negative_number
+    {
+        static Exception Exception;
+        
+        Establish _context = () =>
+        {
+            _systemUnderTest = new Calculator();
+            
+        };
+        
+        Because of = () => { Exception = Catch.Exception(() => _result = _systemUnderTest.Add("-6,8,-3")); };
+        // _result = _systemUnderTest.Add("-6");
+        
+        It should_fail = () =>
+            Exception.Should().Be(Exception);
+        
+        It should_have_a_specific_reason = () =>
+            Exception.Message.Should().Contain("negatives");
+        
+       // It should_return_the_sum_of_all = () => { _result.Should().Be(8); };
+
+        static Calculator _systemUnderTest;
+        static int  _result;
+    }
+    
+    public class when_maxnumber_thousand
+    {
+        Establish _context = () =>
+        {
+            _systemUnderTest = new Calculator();
+        };
+
+        Because of = () => { _result = _systemUnderTest.Add("\n2,1001"); };
+
+        It should_return_the_sum_of_all = () => { _result.Should().Be(2); };
+        static Calculator _systemUnderTest;
+        static int _result;
+    }
+    
+    public class when_using_custom_multicharacter_delimiter
+    {
+        Establish _context = () =>
+        {
+            _systemUnderTest = new Calculator();
+        };
+
+        Because of = () => { _result = _systemUnderTest.Add("//[ ]\n1 2 3"); };
+
+        It should_return_the_sum_of_all = () => { _result.Should().Be(6); };
+        static Calculator _systemUnderTest;
+        static int _result;
+    }
+    
+    public class when_using_multi_custom_multicharacter_delimiter
+    {
+        Establish _context = () =>
+        {
+            _systemUnderTest = new Calculator();
+        };
+
+        Because of = () => { _result = _systemUnderTest.Add("//[ ][%]\n1 2%3"); };
+
+        It should_return_the_sum_of_all = () => { _result.Should().Be(6); };
+        static Calculator _systemUnderTest;
+        static int _result;
+    }
 }
